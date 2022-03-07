@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/popup_views/alert_popup.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -72,9 +73,43 @@ class _LoginViewState extends State<LoginView> {
                 switch (e.code) {
                   case "user-not-found":
                     devtools.log('Invalid user');
+                    const title = Text('Invalid user');
+                    const message =
+                        Text('User not found. Please create an account.');
+                    final textButtonsList = [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                        child: const Text('Ok'),
+                      ),
+                    ];
+                    await showPopup(
+                      context,
+                      title,
+                      message,
+                      textButtonsList,
+                    );
                     break;
                   case "wrong-password":
                     devtools.log('Password is incorrect');
+                    const title = Text('Invalid credentials');
+                    const message =
+                        Text('Incorrect password entered. Please try again.');
+                    final textButtonsList = [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                        child: const Text('Ok'),
+                      ),
+                    ];
+                    await showPopup(
+                      context,
+                      title,
+                      message,
+                      textButtonsList,
+                    );
                     break;
                 }
               }
