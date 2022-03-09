@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/popup_views/alert_popup.dart';
+import 'package:mynotes/popup_views/email_verify_popup.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({Key? key}) : super(key: key);
@@ -61,22 +63,72 @@ class _RegisterViewState extends State<RegisterView> {
               final password = _password.text;
 
               try {
-                final userCredential =
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
-                devtools.log(userCredential.toString());
+                final user = FirebaseAuth.instance.currentUser;
+                if (user != null) {
+                  await user.sendEmailVerification();
+                  await showEmailVerifyPopup(context);
+                }
               } on FirebaseAuthException catch (e) {
                 switch (e.code) {
                   case 'weak-password':
-                    devtools.log('Weak password');
+                    const title = Text('Weak password');
+                    const message = Text(
+                        'Weak password detected. Please use a stronger password.');
+                    final textButtonsList = [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                        child: const Text('Ok'),
+                      ),
+                    ];
+                    await showPopup(
+                      context,
+                      title,
+                      message,
+                      textButtonsList,
+                    );
                     break;
                   case 'email-already-in-use':
-                    devtools.log('Email is already in use');
+                    const title = Text('Email already in use');
+                    const message = Text(
+                        'Email entered is already in use. Please login instead.');
+                    final textButtonsList = [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                        child: const Text('Ok'),
+                      ),
+                    ];
+                    await showPopup(
+                      context,
+                      title,
+                      message,
+                      textButtonsList,
+                    );
                     break;
                   case 'invalid-email':
-                    devtools.log('Invalid email entered');
+                    const title = Text('Invalid email');
+                    const message = Text('Email address is invalid.');
+                    final textButtonsList = [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                        child: const Text('Ok'),
+                      ),
+                    ];
+                    await showPopup(
+                      context,
+                      title,
+                      message,
+                      textButtonsList,
+                    );
                     break;
                 }
               }

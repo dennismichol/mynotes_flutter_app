@@ -4,6 +4,7 @@ import 'dart:developer' as devtools show log;
 
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/popup_views/alert_popup.dart';
+import 'package:mynotes/popup_views/email_verify_popup.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -65,10 +66,17 @@ class _LoginViewState extends State<LoginView> {
                   email: email,
                   password: password,
                 );
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  notesRoute,
-                  (route) => false,
-                );
+                final user = FirebaseAuth.instance.currentUser;
+                if (user != null) {
+                  if (user.emailVerified) {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      notesRoute,
+                      (route) => false,
+                    );
+                  } else {
+                    await showEmailVerifyPopup(context);
+                  }
+                }
               } on FirebaseAuthException catch (e) {
                 switch (e.code) {
                   case "user-not-found":

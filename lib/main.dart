@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/popup_views/email_verify_popup.dart';
 import 'package:mynotes/views/login_view.dart';
 import 'package:mynotes/views/notes_view.dart';
 import 'package:mynotes/views/register_view.dart';
@@ -23,6 +24,7 @@ void main() {
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
         notesRoute: (context) => const NotesView(),
+        verifyEmailRoute: (context) => const VerifyEmailView(),
       },
     ),
   );
@@ -45,7 +47,7 @@ class HomePage extends StatelessWidget {
                 if (user.emailVerified) {
                   devtools.log('Email is verified');
                 } else {
-                  return const VerifyEmailView();
+                  return const LoginView();
                 }
               } else {
                 return const LoginView();
